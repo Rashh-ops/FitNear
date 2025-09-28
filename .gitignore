@@ -1,1 +1,13 @@
 ".env" 
+# Node.js dependencies
+node_modules/
+npm-debug.log
+
+# Environment variables
+.env
+gym-frontend/.env
+gym-finder-backend/.env
+
+# Build files
+dist/
+build/
