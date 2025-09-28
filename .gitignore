@@ -11,3 +11,5 @@ gym-finder-backend/.env
 # Build files
 dist/
 build/
+"gym-finder-backend/node_modules/" 
+"gym-frontend/node_modules/" 
