@@ -16,16 +16,17 @@ export default function CheckoutForm({ fees }) {
     setSuccessMessage("");
 
     try {
-      // 1. Create PaymentIntent on backend
-      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/payment/pay`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ amount: fees }),
-      });
+      const res = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/payment/pay`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ amount: fees }),
+        }
+      );
 
       const { clientSecret } = await res.json();
 
-      // 2. Confirm payment with card details
       const cardElement = elements.getElement(CardElement);
       const result = await stripe.confirmCardPayment(clientSecret, {
         payment_method: { card: cardElement },
@@ -43,35 +44,46 @@ export default function CheckoutForm({ fees }) {
     }
   };
 
-  // Stripe CardElement styling
   const cardElementOptions = {
     style: {
       base: {
         fontSize: "16px",
-        color: "#32325d",
-        "::placeholder": { color: "#a0aec0" },
+        color: "#111827", // near-black like macOS
+        "::placeholder": { color: "#9CA3AF" }, // subtle gray
       },
       invalid: {
-        color: "#e53e3e",
+        color: "#DC2626", // red-600
       },
     },
   };
 
   return (
-    <form onSubmit={handlePay} className="space-y-4 p-4 border rounded-md shadow">
-      <label className="block font-medium">Enter Card Details</label>
-      <CardElement options={cardElementOptions} className="p-2 border rounded" />
+    <form
+      onSubmit={handlePay}
+      className="bg-white/90 backdrop-blur-md rounded-2xl shadow-lg shadow-gray-200/70 p-6 space-y-5"
+    >
+      <h3 className="text-lg font-semibold text-gray-800">
+        Enter Card Details
+      </h3>
+
+      <div className="p-3 border rounded-xl bg-gray-50">
+        <CardElement options={cardElementOptions} />
+      </div>
 
       <button
         type="submit"
         disabled={!stripe || loading}
-        className="w-full bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"
+        className="w-full bg-black text-white py-2.5 rounded-xl font-medium 
+                   hover:scale-[1.02] active:scale-[0.98] transition-transform 
+                   disabled:opacity-50"
       >
         {loading ? "Processing..." : `Pay ₹${fees} (10% off applied)`}
       </button>
 
-      {errorMessage && <p className="text-red-600">{errorMessage}</p>}
-      {successMessage && <p className="text-green-600">{successMessage}</p>}
+      {errorMessage && <p className="text-red-600 text-sm">{errorMessage}</p>}
+      {successMessage && (
+        <p className="text-green-600 text-sm">{successMessage}</p>
+      )}
     </form>
   );
 }
